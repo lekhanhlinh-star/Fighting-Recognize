@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="static/css/home.css">
+    <link rel="stylesheet" href="static/css/bootstrap.min.css">
+</head>
+<body>
+    <div id="header">
+        <a href="#">
+            <div class="header_logo">                
+            </div>
+        </a>
+        <form action="" class="header_search">
+            <div class="search">
+                <input class="header_input-search" placeholder="Enter keywords to search" required type="text">
+                <button class="header_btn-search" role="button">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+        </form>
+        <div class="header_list" id="header-list-id">
+            <ul class="header_list-item">
+                <li class="header_sub-list">
+                    <a class="font-14 hover-header" href="#">
+                        <i class="hover-header1 fas fa-laptop"></i>Product
+                    </a>
+                </li>
+                <li class="header_sub-list">
+                    <a class="font-14 hover-header" href="#">
+                        <i class="hover-header1 fas fa-clipboard-check"></i>Tutorial
+                    </a>
+                </li>
+                <li class="header_sub-list">
+                    <a class="font-14 hover-header" href="#">
+                        <i class="hover-header1 fas fa-users"></i>Information
+                    </a>
+                </li>
+                <li class="header_sub-list" id="li-cart">
+                    <a class="font-14 hover-header" href="#">
+                        <i class="hover-header1 fas fa-shopping-cart"></i>Cart
+                    </a>
+                    <div class="icon-cart" id="icon-cart"></div>
+                </li>
+                <li class="header_sub-list">
+                    <a class="font-14 hover-header js-btn-login" role="button" href="#">
+                        <i class="hover-header1 fas fa-user"></i>Login
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="menu-mobile-class" id="mobile-menu">
+            <i class="menu-mobile-btn ti-menu"></i>
+        </div>
+
+        <div class="progress-container">
+            <div class="progress-bar" id="myBar"></div>
+        </div>
+    </div>
+</body>
+</html>

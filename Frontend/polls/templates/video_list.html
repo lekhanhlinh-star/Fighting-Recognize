@@ -1,0 +1,131 @@
+<!-- templates/video_list.html -->
+<!DOCTYPE html>
+    {% extends "./polls/base.html" %}
+    {% load static %}
+    {% block content %}
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video List</title>
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <div class="row " >
+        <div class="col-2">
+
+        </div>
+        <div class="col-8 blurred_bgr" >
+            <div style="display: flex; justify-content: space-around; margin-top: 20px; padding-bottom: 10px; border-bottom: 1px solid #000;">
+                <h1>Video List</h1>
+                <a class="btn btn-primary btn-thumbnail" style="width: 100px;padding-top: 15px;">upload</a>
+            </div>
+            
+            {% if videos %}
+                <ul>
+                    {% for video in videos %}
+                        <li style="text-decoration: none; list-style: none;">
+                            <div class="card col-4 pt-2 pb-2 mt-4 mb-1" style="align-items: center;">
+                                <img class="video-thumbnail" style="background-image: url(https://png.pngtree.com/thumb_back/fh260/background/20220512/pngtree-retro-video-camera-and-film-tape-on-yellow-cimena-background-image_1213639.jpg); background-size: cover;" data-video-url="../..{{ video.file.url }}" width="320" height="240">
+                                <div class="card-body">
+                                  <h5 class="card-title">{{ video.title }}</h5>
+                                </div>
+                                <div class="card-footer ">
+                                    <small class="text-muted">Uploaded on: {{ video.upload_date }}</small>
+                                </div>
+                                <div style="display: flex; gap: 10px;">
+                                    <button class="delete-video btn btn-primary" style="width: 120px;" data-video-id="{{ video.id }}">Xóa</button>
+                                    <button class="choose-video btn btn-primary" style="width: 120px;" data-video-id="{{ video.id }}">Chọn</button>
+                                </div>
+                              </div>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>Không có video.</p>
+            {% endif %}
+        </div>
+    </div>
+</body>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+        // Xử lý sự kiện click trên nút "Xóa"
+        $(".delete-video").on("click", function() {
+            var videoId = $(this).data("video-id");
+            
+            // Hiển thị hộp thoại xác nhận xóa video
+            if (confirm("Bạn có chắc muốn xóa video này không?")) {
+                // Gửi yêu cầu xóa video đến máy chủ
+                $.ajax({
+                    type: "POST",
+                    url: "/delete_video/" + videoId + "/",  // Điều này cần phù hợp với URL của view xóa video của bạn
+                    data: {
+                        csrfmiddlewaretoken: "{{ csrf_token }}"
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            // Xóa video thành công, có thể làm cập nhật giao diện ở đây
+                            location.reload();  
+                            // Ví dụ: xóa thẻ <li> chứa video
+                            $(this).closest("li").remove();
+                        } else {
+                            alert("Xóa video không thành công. Vui lòng thử lại sau.");
+                        }
+                    }
+                });
+            }
+        });
+    });
+
+    $(document).ready(function() {
+        // Xử lý sự kiện click trên nút "Chọn"
+        $(".choose-video").on("click", function() {
+            var videoId = $(this).data("video-id");
+            // Hiển thị hộp thoại xác nhận chọn video
+            if (confirm("Bạn có chắc muốn chọn video này không?")) {
+                // Gửi yêu cầu chọn video đến máy chủ
+                window.location.href = "/features/" + videoId + "/";
+            }
+        });
+    });
+
+
+    document.addEventListener("DOMContentLoaded", function() {
+    var videoThumbnails = document.querySelectorAll(".video-thumbnail");
+    var uploadThumbnails = document.querySelectorAll(".btn-thumbnail");
+    videoThumbnails.forEach(function(thumbnail) {
+        thumbnail.addEventListener("click", function() {
+            var videoUrl = thumbnail.getAttribute("data-video-url");
+
+            // Tạo một cửa sổ pop-up và chèn video vào đó.
+            var popupWindow = window.open("", "_blank", "width=640, height=480");
+            var popupContent = `<video width="100%" height="100%" controls autoplay><source src="${videoUrl}" type="video/mp4">Your browser does not support the video tag.</video>`;
+            popupWindow.document.write(popupContent);
+
+            // Đóng cửa sổ pop-up khi người dùng đóng nó.
+            popupWindow.onbeforeunload = function() {
+                popupWindow.close();
+            };
+        });
+    });
+
+    uploadThumbnails.forEach(function(thumbnail) {
+        thumbnail.addEventListener("click", function() {           
+            // Tạo một cửa sổ pop-up và chèn html vào.
+            var popupWindow = window.open("./upload", "_blank", "width=640, height=480");
+            // Đóng cửa sổ pop-up khi người dùng đóng nó.
+            popupWindow.onbeforeunload = function() {
+                popupWindow.close();
+                // setTimeout(function() {
+                //     location.reload();
+                // }, 1000); // Reload sau 1 giây (hoặc thời gian mong muốn).
+            };
+        });
+    });
+});
+</script>
+{% endblock %}
+</html>

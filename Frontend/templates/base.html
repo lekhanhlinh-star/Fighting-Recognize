@@ -1,0 +1,18 @@
+<!-- base.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    {% block title %}{% endblock %}
+    <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+    {% include './header.html' %}
+    <!-- Nội dung chung của trang web -->
+    
+    {% block content %}
+    {% endblock %}
+    
+    <!-- Footer -->
+    {% include './footer.html' %}
+</body>
+</html>

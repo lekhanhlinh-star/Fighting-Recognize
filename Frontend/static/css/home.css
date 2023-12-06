@@ -1,0 +1,99 @@
+.body{
+    z-index: 9999;
+}
+.footer{
+    z-index: 1;
+}
+.customWeb{
+    background-image: url(../images/bg1.png);
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: 85vh;
+    /* opacity: 0.9; */
+}
+.foot1{
+    position: relative;
+    top:55vh;
+}
+.hover1{
+    border-radius: 20px;
+    background: transparent;
+    height: 50px;
+    width: 150px;
+    color: white;
+}
+.hover1:hover {
+
+    color: black;
+    background: white;
+
+}
+.content{
+    height: 50vh;
+    background: black;
+}
+.context{
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    padding: 0 50px;
+
+}
+.con1{
+    height: 100%;
+    width: 100%;
+    align-items: center;
+    text-align: left;
+    padding-top: 50px;
+    padding-right: 100px;
+    border-right: 1px solid white;
+}
+.con2{
+    height: 100%;
+    width: 100%;
+    align-items: center;
+    text-align: left;
+    padding-right: 100px;
+    border-right: 1px solid white;
+}
+.con1 h3, .con2 h3{
+    padding-left: 30px;
+}
+.con2 img{
+    padding-left: 30px;
+    width: 95%;
+    height: 95%;
+}
+.footer{
+    display: flex;
+    justify-content: space-around;
+    background: black;
+}
+.footCon1 ul{
+    list-style-type: none;
+}
+.footCon1 ul li{
+    color: white;
+    font-size: small;
+    font-family:Arial, Helvetica, sans-serif;   
+}
+.footCon1 ul li h2{
+    font-weight: bold;
+}
+.btn_upload {
+    font-size: 20px;
+    border: none;
+    border-radius: 10px;
+    height: 50px;
+    background: #2f1eef;
+    color: #ffffff;
+}
+.btn_sample {
+    margin-top: 10px
+    font-size: 20px;
+    border: none;
+    border-radius: 10px;
+    height: 50px;
+    background: #2f1eef;
+    color: #ffffff;
+}

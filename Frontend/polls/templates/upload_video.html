@@ -1,0 +1,24 @@
+{% load static %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Video</title>
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<div>
+    <!-- myapp/templates/upload_video.html -->
+    <div style="display: flex; justify-content: center;">
+        <div style="width: 120px;">
+
+        </div>
+        <div class="col-6">
+            <form method="post" enctype="multipart/form-data" style="display: flex; flex-direction: column; justify-content: center;">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button style=" width: 150px; height: 40px; border: none; border-radius: 11px; background: blue; color: #ffff; font-size: 15px;" type="submit">Tải lên</button>
+            </form>
+        </div>
+    </div>
+</div>

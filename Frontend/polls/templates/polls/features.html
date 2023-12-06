@@ -1,0 +1,411 @@
+<html lang="en">
+    {% extends "./base.html" %}
+    {% load static %}
+    {% block content %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Features Page</title>
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    
+</head>
+<body >
+    <div class="container ">
+        <div class="row blurred_bgr"> 
+            <div class="col-xl-2">  
+            </div>
+            <div class="col-xl-6 p-2 text-center fs-3 fw-bold"> 
+                Detect 
+            </div>
+            <div class="col-xl-4 p-2 text-center fs-3 fw-bold">  
+                Result
+            </div>
+        </div>
+        <div class="row blurred_bgr" > 
+            <div class="col-xl-2">                
+                <nav id="sidebarMenu" class="collapse d-lg-block sidebar collapse bg-white">
+                    <div class="position-sticky">
+                      <div class="list-group list-group-flush mx-3 mt-4" style="display: flex; border-radius: 7px; text-align: center; flex-direction: column; gap: 14px">
+                        <a class="btn btn-primary" href="{%url 'video_list' %}">Upload video</a>
+                        <p  {% if not video_file %} hidden {% endif %}>Click to detect you choose</p>
+                        <button class="btn btn-primary" aria-pressed="false" autocomplete="off" id="openFileButton" data-video-url="../..{{ video_file.file.url }}"  {% if not video_file %} hidden {% endif %}>{{ video_file.title }}</button>
+                        <!-- <input class="form-control" type="file" id="fileInput" accept="video/*" /> -->
+                        <div id="fileForm2">
+                            <p>Detect file .avi</p>
+                            <input type="file" id="fileInput2" accept=".avi"  />
+                            <button class="btn btn-primary" id="uploadAvi" style="margin-top: 20px; width: 100%;">Detect file</button>
+                        </div>
+                      </div>
+                    </div>
+                  </nav>
+            </div>   
+            <div class="col-xl-6">
+                <div class="card p-2" style="width: 98%;">
+                    {% comment %} <img src="https://som.edu.vn/wp-content/uploads/2022/11/tri-tue-nhan-tao-la-gi.jpg" class="card-img-top" alt="..."> {% endcomment %}
+                    <div>
+                        <div id="display_image">
+                            <div id="webCamDisplay" >
+                                <video id="webCam" width="100%" height="100%" autoplay muted></video>
+                            </div>
+                            <div id="playVideoOnCamDisplay" style="display: none;">
+                                <video id="playVideoOn" width="100%" height="100%" autoplay muted ended ></video>
+                            </div>
+                        </div>
+                        <div class="resultContainer" hidden>
+                            <canvas id="canvasElement"></canvas>   
+                           <img id="photo">
+                       </div>
+                    </div>
+                    <div class="card-body">
+                      <h5 class="card-title">Camera</h5>
+                      <select class="form-select" aria-label="Default select example" id="menuSelect">
+                        <option selected>Select menu</option>
+                        <option value="1">Web Camera</option>
+                        <option value="2">Play video</option>
+                      </select>
+                      <p class="card-text">Only mp4</p>
+                      <input class="form-control" type="file" id="fileInput" accept="video/*" />
+                      <button class="btn btn-primary" aria-pressed="false" autocomplete="off" id="sendButton" style="width: 120px; margin-top: 20px;" >Detect</button>
+                      <p class="card-text">click button to detect.</p>
+                      <button  class="btn btn-primary" id="startWebCamBtn" autoplay>This is the start button</button>
+                      <button  class="btn btn-primary" id="stopWebCamBtn" autoplay>This is the stop button</button>
+                    </div>
+                  </div>
+            </div>  
+            <div class="col-xl-4">
+                <div style="display: none;" id="message_fight">
+                    <div class="card p-2 d-flex flex-row" style="width: 100%;"  >
+                        <img src="https://som.edu.vn/wp-content/uploads/2022/11/tri-tue-nhan-tao-la-gi.jpg" class="card-img-top" style="width: 50%;" alt="...">
+                        <div class="card-body">
+                          <h5 class="card-title" >Activity Fight</h5>
+                        </div>
+                      </div>
+                </div>
+                <div style="display: none;" id="message_normal" >
+                    <div class="card p-2 d-flex flex-row" style="width: 100%;" >
+                        <img src="https://som.edu.vn/wp-content/uploads/2022/11/tri-tue-nhan-tao-la-gi.jpg" class="card-img-top" style="width: 50%;" alt="...">
+                        <div class="card-body">
+                            <h5 class="card-title" >Activity Normal</h5>
+                        </div>
+                    </div>
+                </div>
+                <div >
+                    <div class="card p-2 d-flex flex-row" style="width: 100%;" >
+                        <div class="card-body">
+                            <h3 class="card-title">This video upload is</h3>
+                            <div style="display: none;" id="result_normal" >
+                                <h5 class="card-title" >Activity Normal</h5>
+                            </div>
+                            <div style="display: none;" id="result_fight" >
+                                <h5 class="card-title" >Activity Fight</h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div> 
+        </div>
+    </div>
+    <script>
+        //menu select 
+        const menuSelect = document.getElementById('menuSelect');
+        const display1 = document.getElementById('webCamDisplay');
+        const display2 = document.getElementById('playVideoOnCamDisplay');
+        menuSelect.addEventListener('change', function() {
+            const selectedOption = menuSelect.options[menuSelect.selectedIndex];
+            const selectedValue = selectedOption.value;
+            
+            if (selectedValue === '1') {
+                // Thực hiện các tác vụ khi chọn "Web Camera"
+                display1.style.display = "block";
+                display2.style.display = "none";
+                console.log('Bạn đã chọn: web cam');
+            } else if (selectedValue === '2') {
+                // Thực hiện các tác vụ khi chọn "Play video"
+                console.log('Bạn đã chọn: Play video');
+                display1.style.display = "none";
+                display2.style.display = "block";
+            }
+        });
+        //
+        const fileInput2 = document.getElementById('fileInput2');
+        var ws = new WebSocket('ws://127.0.0.1:8001/upload/');
+        var webSocket = new WebSocket('ws://127.0.0.1:8001/predict');
+        // camera
+        var webCam = document.getElementById('webCam')
+        var playVideoOn = document.getElementById('playVideoOn')
+        var localstream;
+        const startWebCamBtn = document.getElementById('startWebCamBtn')
+        const stopWebCamBtn = document.getElementById('stopWebCamBtn')
+        //
+        const detect_url = document.getElementById('sendButton')
+        const detect_open = document.getElementById('openFileButton')
+        const send_file_avi = document.getElementById('uploadAvi')
+        //
+        const message_fight = document.getElementById('message_fight')
+        const message_normal = document.getElementById('message_normal')
+        const re_fight = document.getElementById('result_fight')
+        const re_normal = document.getElementById('result_normal')
+        //
+        let sendFrameInterval = null
+        //
+        let image_input = document.querySelector("#image_input");
+        let photo =  document.querySelector("#photo");
+        const canvasElement = document.getElementById('canvasElement');
+        var uploaded_image = "";
+        var check_open_Cam=false;
+        var check_upload = false;
+        let file_load_avi = null;
+        //
+        
+        fileInput2.addEventListener('change', function(event) {
+            const selectedFile = event.target.files[0];
+            if (selectedFile) {
+                file_load_avi = selectedFile;
+                console.log('Đã chọn tệp:', selectedFile.name);
+                // Ở đây, bạn có thể thực hiện xử lý với tệp đã chọn
+            } else {
+                console.log('Không có tệp nào được chọn.');
+            }
+        });
+        // 
+        
+        playVideoOn.addEventListener('ended', function () {
+            // Bắt đầu video lại khi video kết thúc
+            playVideoOn.currentTime = 0;
+            playVideoOn.play();
+            });
+     
+        startWebCamBtn.addEventListener("click", startWebCam)
+        stopWebCamBtn.addEventListener("click", stopWebCam)
+
+        send_file_avi.addEventListener("click", async function(){
+            if (!ws || ws.readyState === WebSocket.CLOSED){
+                ws = new WebSocket('ws://127.0.0.1:8001/upload/');
+                ws.addEventListener('open', function (event) {
+                    console.log('WebSocket connection is open');
+                });
+                if(file_load_avi){
+                    console.log('check4')
+                    const reader = new FileReader();
+                    reader.onload = async function(e) {
+                            console.log('da gui')
+                            const fileData = e.target.result;
+                            await ws.send(fileData);
+                        }
+                    ws.addEventListener('message', async function (event) {
+                        // Xử lý phản hồi từ server (nếu có)
+                        const resultData = await event.data; // Dữ liệu nhận được từ WebSocket
+                        // Hiển thị dữ liệu lên trang HTML
+                        if(resultData=='Normal')
+                        {
+                            re_normal.style.display = "block";
+                            re_fight.style.display = "none";
+                        }
+                        if(resultData=='Fight'){
+                            re_normal.style.display = "none";
+                            re_fight.style.display = "block";
+                        }
+                        if (ws && ws.readyState === WebSocket.OPEN) {
+                            console.log('close connection')
+                            ws.close();
+                        }
+                    });
+                    await reader.readAsArrayBuffer(file_load_avi);
+                }
+            } else {
+                if(file_load_avi){
+                    const reader = new FileReader();
+                    reader.onload = async function(e) {
+                            console.log('da gui')
+                            const fileData = e.target.result;
+                            await ws.send(fileData);
+                        }
+                    ws.addEventListener('message', async function (event) {
+                        // Xử lý phản hồi từ server (nếu có)
+                        const resultData = await event.data; // Dữ liệu nhận được từ WebSocket
+                        console.log('resultData')
+                        // Hiển thị dữ liệu lên trang HTML
+                        if(resultData=='Normal')
+                        {
+                            re_normal.style.display = "block";
+                            re_fight.style.display = "none";
+                        }
+                        if(resultData=='Fight'){
+                            re_normal.style.display = "none";
+                            re_fight.style.display = "block";
+                        }
+                        if (ws && ws.readyState === WebSocket.OPEN) {
+                            console.log('close connection')
+                            ws.close();
+                        }
+                    });
+                    await reader.readAsArrayBuffer(file_load_avi);
+                }
+            }
+        })
+        detect_url.addEventListener("click", runFile)
+        detect_open.addEventListener("click", function(){
+            var videoUrl = detect_open.getAttribute("data-video-url");
+            check_upload = true
+            if (videoUrl) {
+                // Bắt đầu video bằng cách đặt nguồn (source) là URL của video file
+                playVideoOn.src = videoUrl;
+                // Bắt đầu phát video
+                playVideoOn.play();
+            }
+        })
+
+        console.log("chay outside")
+        
+        function startWebCam() {
+            navigator.getUserMedia(
+                { video: {} },
+                stream => webCam.srcObject = stream,
+                err => console.error(err)
+                )
+            check_open_Cam=true
+        }
+
+        function stopWebCam() {
+            webCam.pause();
+            playVideoOn.pause();
+            webCam.srcObject  = null;
+            clearInterval(sendFrameInterval);
+            check_open_Cam=false 
+            if (webSocket && webSocket.readyState === WebSocket.OPEN) {
+                console.log('close connection')
+                webSocket.close();
+            }
+        };
+
+        function runFile(){
+            const videoInput = document.getElementById('fileInput');
+            const videoFile = videoInput.files[0];
+            check_upload = true
+            if (videoFile) {
+                // Bắt đầu video bằng cách đặt nguồn (source) là URL của video file
+                playVideoOn.src = URL.createObjectURL(videoFile);
+                // Bắt đầu phát video
+                playVideoOn.play();
+            }
+        }
+        
+        console.error("check",webSocket)
+        
+        // event listener for when the WebSocket connection is established
+        webSocket.addEventListener('open', function (event) {
+            console.log('WebSocket connection is open');
+        });
+        
+        // Lắng nghe sự kiện khi nhận dữ liệu từ WebSocket
+
+
+        // event listener for when the WebSocket connection is closed
+        webSocket.addEventListener('close', function (event) {
+            console.log('WebSocket connection is closed');
+        });
+        
+        // event listener for when a new frame is available from the webcam
+        webCam.addEventListener('play', async function () {
+            // set the canvas dimensions to match the video dimensions
+            canvasElement.width = webCam.videoWidth
+            canvasElement.height = webCam.videoHeight;
+            if (!webSocket || webSocket.readyState === WebSocket.CLOSED)
+            {
+                webSocket = new WebSocket('ws://127.0.0.1:8001/predict');
+                webSocket.addEventListener('open', function (event) {
+                    console.log('WebSocket connection is open');
+                });
+            }
+            var localMedia = null;
+            // send a new frame to the server every 100ms
+            sendFrameInterval =setInterval( async function () {
+                if(check_open_Cam)
+                {
+                    // draw the current frame onto the canvas
+                    const canvasContext = canvasElement.getContext('2d');
+                    canvasContext.drawImage(webCam, 0, 0, canvasElement.width, canvasElement.height);
+            
+                    // get the base64-encoded data of the canvas image
+                    const imageData = canvasElement.toDataURL('image/png');
+                        webSocket.onmessage = function(event) {
+                        console.error("predict",event.data)
+                   };
+                   // send the image data to the server
+                   await webSocket.send(imageData)
+                }
+                if(check_upload){
+                    const context = canvasElement.getContext('2d');
+                    context.drawImage(webCam, 0, 0, canvasElement.width, canvasElement.height);
+                    const base64Data = canvasElement.toDataURL('image/png');
+                    if(base64Data!='data:,')
+                    {
+                        await webSocket.send(base64Data)
+                    }
+                }
+
+                webSocket.addEventListener('message',async function (event) {
+                    const resultData = await event.data; // Dữ liệu nhận được từ WebSocket
+                    // Hiển thị dữ liệu lên trang HTML
+                    if(resultData=='Normal')
+                    {
+                        message_normal.style.display = "block";
+                        message_fight.style.display = "none";
+                    }
+                    if(resultData=='Fight'){
+                        message_normal.style.display = "none";
+                        message_fight.style.display = "block";
+                    }
+                });
+
+            }, 100);
+        });
+        
+        //play video
+        playVideoOn.addEventListener('play', async function () {
+            // set the canvas dimensions to match the video dimensions
+            canvasElement.width = playVideoOn.videoWidth
+            canvasElement.height = playVideoOn.videoHeight;
+            if (!webSocket || webSocket.readyState === WebSocket.CLOSED)
+            {
+                webSocket = new WebSocket('ws://127.0.0.1:8001/predict');
+                webSocket.addEventListener('open', function (event) {
+                    console.log('WebSocket connection is open');
+                });
+            }
+            var localMedia = null;
+            // send a new frame to the server every 100ms
+            sendFrameInterval =setInterval( async function () {
+                if(check_upload){
+                    const context = canvasElement.getContext('2d');
+                    context.drawImage(webCam, 0, 0, canvasElement.width, canvasElement.height);
+                    const base64Data = canvasElement.toDataURL('image/png');
+                    if(base64Data!='data:,')
+                    {
+                        await webSocket.send(base64Data)
+                    }
+                }
+                webSocket.addEventListener('message',async function (event) {
+                    const resultData = await event.data; // Dữ liệu nhận được từ WebSocket
+                    // Hiển thị dữ liệu lên trang HTML
+                    if(resultData=='Normal')
+                    {
+                        message_normal.style.display = "block";
+                        message_fight.style.display = "none";
+                    }
+                    if(resultData=='Fight'){
+                        message_normal.style.display = "none";
+                        message_fight.style.display = "block";
+                    }
+                });
+            }, 100);
+        });
+        
+        // btn 
+        // end camera
+    </script>
+</body>
+{% endblock %}
+</html>
